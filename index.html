@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student & Faculty Portal</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <span class="logo-icon">🏛️</span>
+        <div>
+          <h1>College Academic Portal</h1>
+          <p class="subtitle">Student & Faculty Database Management</p>
+        </div>
+      </div>
+      <!-- Tab Switcher -->
+      <nav class="tab-navigation">
+        <button id="btn-tab-student" class="tab-btn active" onclick="switchTab('student')">
+          <span>🎓</span> Student Tab
+        </button>
+        <button id="btn-tab-faculty" class="tab-btn" onclick="switchTab('faculty')">
+          <span>👨‍🏫</span> Faculty Tab
+        </button>
+      </nav>
+    </header>
+
+    <!-- Global Notification Banner -->
+    <div id="notification" class="notification hidden" role="alert">
+      <span id="notification-message"></span>
+      <button class="notification-close" onclick="hideNotification()">&times;</button>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main>
+      <!-- ============================================== -->
+      <!-- TAB 1: STUDENT VIEW                            -->
+      <!-- ============================================== -->
+      <section id="tab-student" class="tab-content active">
+        <div class="card student-search-card">
+          <div class="card-header">
+            <h2>🎓 Student Profile Lookup</h2>
+            <p>Enter your Student ID to view your academic information and assigned faculty mentor.</p>
+          </div>
+          <form id="student-search-form" class="search-form" onsubmit="searchStudentProfile(event)">
+            <div class="form-group search-input-group">
+              <label for="search-student-id">Student ID</label>
+              <div class="search-row">
+                <input 
+                  type="text" 
+                  id="search-student-id" 
+                  placeholder="Paste your 24-character MongoDB Student ID (e.g., 6ace72fc...)"
+                  required
+                >
+                <button type="submit" class="btn btn-primary">
+                  <span>🔍</span> View Profile
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <!-- Student Profile Details Display -->
+          <div id="student-profile-container" class="profile-container hidden">
+            <div class="profile-card">
+              <div class="profile-header">
+                <div class="profile-avatar" id="profile-avatar">S</div>
+                <div>
+                  <h3 id="profile-name">Student Name</h3>
+                  <span class="badge badge-course" id="profile-course">Course</span>
+                </div>
+              </div>
+
+              <div class="profile-grid">
+                <div class="profile-item">
+                  <span class="profile-label">Student ID</span>
+                  <span class="profile-value" id="profile-id">-</span>
+                </div>
+                <div class="profile-item">
+                  <span class="profile-label">Roll Number</span>
+                  <span class="profile-value" id="profile-roll">-</span>
+                </div>
+                <div class="profile-item">
+                  <span class="profile-label">Email Address</span>
+                  <span class="profile-value" id="profile-email">-</span>
+                </div>
+                <div class="profile-item">
+                  <span class="profile-label">Current Semester</span>
+                  <span class="profile-value" id="profile-semester">-</span>
+                </div>
+              </div>
+
+              <!-- Mentor Information -->
+              <div class="mentor-section">
+                <h4>👨‍🏫 Assigned Faculty Mentor</h4>
+                <div id="mentor-details" class="mentor-box">
+                  <p id="mentor-text">None assigned</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- TAB 2: FACULTY PORTAL                          -->
+      <!-- ============================================== -->
+      <section id="tab-faculty" class="tab-content">
+        <!-- Faculty Sub Navigation -->
+        <div class="faculty-tabs">
+          <button id="sub-tab-students-btn" class="sub-tab-btn active" onclick="switchFacultySubTab('students')">
+            👥 Students Management
+          </button>
+          <button id="sub-tab-faculty-btn" class="sub-tab-btn" onclick="switchFacultySubTab('faculty')">
+            👨‍🏫 Faculty Records
+          </button>
+        </div>
+
+        <!-- ------------------------------------------------ -->
+        <!-- SUB-PANEL 1: STUDENTS MANAGEMENT                 -->
+        <!-- ------------------------------------------------ -->
+        <div id="faculty-students-panel" class="sub-panel active">
+          <!-- Student Form Card -->
+          <div class="card form-card">
+            <div class="card-header">
+              <h2 id="student-form-title">➕ Add New Student</h2>
+              <p>Add student records with enrollment details and link an optional faculty mentor.</p>
+            </div>
+            <form id="student-form" onsubmit="handleStudentFormSubmit(event)">
+              <input type="hidden" id="student-id-field">
+              
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="student-name">Full Name <span class="required">*</span></label>
+                  <input type="text" id="student-name" placeholder="e.g. Rahul Patil" required>
+                </div>
+                
+                <div class="form-group">
+                  <label for="student-email">Email Address <span class="required">*</span></label>
+                  <input type="email" id="student-email" placeholder="e.g. rahul@example.com" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="student-roll">Roll Number <span class="required">*</span></label>
+                  <input type="text" id="student-roll" placeholder="e.g. CS001" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="student-course">Course / Branch <span class="required">*</span></label>
+                  <input type="text" id="student-course" placeholder="e.g. Computer Science" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="student-semester">Semester <span class="required">*</span></label>
+                  <input type="number" id="student-semester" min="1" max="12" placeholder="e.g. 3" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="student-faculty">Assigned Faculty Mentor</label>
+                  <select id="student-faculty">
+                    <option value="">-- No Faculty Assigned --</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" id="btn-save-student" class="btn btn-primary">
+                  <span>💾</span> Save Student
+                </button>
+                <button type="button" id="btn-cancel-student" class="btn btn-secondary hidden" onclick="cancelStudentEdit()">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Students List Table Card -->
+          <div class="card table-card">
+            <div class="card-header table-header">
+              <div>
+                <h2>📋 Enrolled Students (<span id="students-count">0</span>)</h2>
+                <p>View, edit, delete student records or copy IDs for student lookup.</p>
+              </div>
+              <button class="btn btn-small btn-secondary" onclick="loadStudents()">
+                🔄 Refresh
+              </button>
+            </div>
+            
+            <div class="table-responsive">
+              <table class="data-table" id="students-table">
+                <thead>
+                  <tr>
+                    <th>Roll No</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Course</th>
+                    <th>Sem</th>
+                    <th>Assigned Faculty</th>
+                    <th>Student ID</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="students-table-body">
+                  <tr>
+                    <td colspan="8" class="text-center loading-cell">Loading students...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ------------------------------------------------ -->
+        <!-- SUB-PANEL 2: FACULTY RECORDS                     -->
+        <!-- ------------------------------------------------ -->
+        <div id="faculty-records-panel" class="sub-panel">
+          <!-- Faculty Form Card -->
+          <div class="card form-card">
+            <div class="card-header">
+              <h2 id="faculty-form-title">➕ Add New Faculty Member</h2>
+              <p>Register professors and mentors in the database.</p>
+            </div>
+            <form id="faculty-form" onsubmit="handleFacultyFormSubmit(event)">
+              <input type="hidden" id="faculty-id-field">
+              
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="faculty-name">Full Name <span class="required">*</span></label>
+                  <input type="text" id="faculty-name" placeholder="e.g. Dr. Sharma" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="faculty-email">Email Address <span class="required">*</span></label>
+                  <input type="email" id="faculty-email" placeholder="e.g. sharma@example.com" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="faculty-department">Department <span class="required">*</span></label>
+                  <input type="text" id="faculty-department" placeholder="e.g. Computer Science" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="faculty-designation">Designation <span class="required">*</span></label>
+                  <input type="text" id="faculty-designation" placeholder="e.g. Professor / HOD" required>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" id="btn-save-faculty" class="btn btn-primary">
+                  <span>💾</span> Save Faculty
+                </button>
+                <button type="button" id="btn-cancel-faculty" class="btn btn-secondary hidden" onclick="cancelFacultyEdit()">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Faculty List Table Card -->
+          <div class="card table-card">
+            <div class="card-header table-header">
+              <div>
+                <h2>📋 Registered Faculty (<span id="faculty-count">0</span>)</h2>
+                <p>Manage department members and academic advisors.</p>
+              </div>
+              <button class="btn btn-small btn-secondary" onclick="loadFaculty()">
+                🔄 Refresh
+              </button>
+            </div>
+            
+            <div class="table-responsive">
+              <table class="data-table" id="faculty-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th>Faculty ID</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="faculty-table-body">
+                  <tr>
+                    <td colspan="6" class="text-center loading-cell">Loading faculty...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Student MongoDB Management System &bull; Connected to Express API on Port 4000</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
