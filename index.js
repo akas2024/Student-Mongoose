@@ -28,13 +28,13 @@ app.use((req, res, next) => {
 
 const path = require("path");
 
-// Serve frontend static files
-app.use(express.static(__dirname, { index: false }));
+// Serve frontend static files from public directory
+app.use(express.static(path.join(__dirname, "public"), { index: false }));
 
 // Root route: serves frontend to browsers, JSON health response to API clients
 app.get("/", (req, res) => {
     if (req.accepts("html") && !req.accepts("json")) {
-        return res.sendFile(path.join(__dirname, "index.html"));
+        return res.sendFile(path.join(__dirname, "public", "index.html"));
     }
     res.json({
         success: true,
